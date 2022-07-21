@@ -53,8 +53,8 @@ function deleteFilm(req, res, next) {
         next(new BadRequestError('Некорректный id фильма'));
         return;
       }
-    next(err);
-  });
+      next(err);
+    });
 }
 
 module.exports = {
