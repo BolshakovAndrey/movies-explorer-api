@@ -1,26 +1,12 @@
 const router = require('express').Router();
-const { celebrate, Joi } = require('celebrate');
-const regex = require('../utils/constants');
+const auth = require('../middlewares/auth');
+const { filmCreateValidator, filmDeleteValidator } = require('../middlewares/validator')
+const { getFilms, createFilm, deleteFilm } = require('../controllers/movie');
 
-const {
-  getFilms,
-  createFilm,
-  deleteFilm,
-} = require('../controllers/movie');
+router.get('/',  getFilms);
 
-router.get('/', getFilms);
+router.post('/', auth,  filmCreateValidator, createFilm);
 
-router.post('/', celebrate({
-  body: Joi.object().keys({
-    name: Joi.string().required().min(2).max(30),
-    link: Joi.string().required().regex(regex),
-  }),
-}), createFilm);
-
-router.delete('/:movieId', celebrate({
-  params: Joi.object().keys({
-    cardId: Joi.string().hex().length(24),
-  }),
-}), deleteFilm);
+router.delete('/:movieId', auth, filmDeleteValidator, deleteFilm);
 
 module.exports = router;
