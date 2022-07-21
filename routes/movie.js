@@ -6,8 +6,6 @@ const {
   getFilms,
   createFilm,
   deleteFilm,
-  addLike,
-  deleteLike,
 } = require('../controllers/movie');
 
 router.get('/', getFilms);
@@ -24,17 +22,5 @@ router.delete('/:movieId', celebrate({
     cardId: Joi.string().hex().length(24),
   }),
 }), deleteFilm);
-
-router.put('/:movieId/likes', celebrate({
-  params: Joi.object().keys({
-    cardId: Joi.string().hex().length(24),
-  }),
-}), addLike);
-
-router.delete('/:movieId/likes', celebrate({
-  params: Joi.object().keys({
-    cardId: Joi.string().hex().length(24),
-  }),
-}), deleteLike);
 
 module.exports = router;

@@ -7,8 +7,7 @@ const { celebrate, Joi, errors } = require('celebrate');
 const auth = require('./middlewares/auth');
 const NotFoundError = require('./errors/NotFoundError');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
-
-const { login, createUser } = require('./controllers/users');
+const { login, createUser } = require('./controllers/user');
 const regex = require('./utils/constants');
 const routes = require('./routes/index');
 

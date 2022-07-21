@@ -57,56 +57,8 @@ function deleteFilm(req, res, next) {
     });
 }
 
-// Добавление лайка
-function addLike(req, res, next) {
-  Movie.findByIdAndUpdate(
-    req.params.cardId,
-    { $addToSet: { likes: req.user._id } },
-    { new: true },
-  )
-    .then((movie) => {
-      if (!movie) {
-        next(new NotFoundError('Запрашиваемый фильм не найден'));
-        return;
-      }
-      res.send(movie);
-    })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new BadRequestError('Некорректный id фильма'));
-        return;
-      }
-      next(err);
-    });
-}
-
-// Удаление лайка
-function deleteLike(req, res, next) {
-  Movie.findByIdAndUpdate(
-    req.params.cardId,
-    { $pull: { likes: req.user._id } },
-    { new: true },
-  )
-    .then((movie) => {
-      if (!movie) {
-        next(new NotFoundError('Запрашиваемый фильм не найден'));
-        return;
-      }
-      res.send(movie);
-    })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new BadRequestError('Некорректный id фильма'));
-        return;
-      }
-      next(err);
-    });
-}
-
 module.exports = {
   getFilms,
   createFilm,
   deleteFilm,
-  addLike,
-  deleteLike,
 };

@@ -66,6 +66,7 @@ function updateProfile(req, res, next) {
     {
       new: true,
       runValidators: true,
+      upsert: false,
     },
   )
     .then((userData) => {
