@@ -6,6 +6,14 @@ const NotFoundError = require('../errors/NotFoundError');
 const BadRequestError = require('../errors/BadRequestError');
 const ConflictError = require('../errors/ConflictError');
 const UnauthorizedError = require('../errors/UnauthorizedError');
+const {
+  validationErrorText,
+  BAD_REQUEST_USER,
+  CONFLICT,
+  CODE_MONGO_ERROR,
+  NOT_FOUND_USER,
+  UNAUTHORIZED,
+} = require('../utils/constants');
 
 function getUserInfo(req, res, next) {
   User.findById(req.user._id)
@@ -14,7 +22,7 @@ function getUserInfo(req, res, next) {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new BadRequestError('Некорректный id пользователя'));
+        next(new BadRequestError(BAD_REQUEST_USER));
         return;
       }
       next(err);
@@ -45,11 +53,11 @@ function createUser(req, res, next) {
         .catch((err) => {
           if (err.name === 'ValidationError') {
             const errObject = Object.keys(err.errors).join(', ');
-            next(new BadRequestError(`Некорректные данные: ${errObject}`));
+            next(new BadRequestError(validationErrorText(errObject)));
             return;
           }
-          if (err.code === 11000) {
-            next(new ConflictError('Такой email уже занят'));
+          if (err.code === CODE_MONGO_ERROR) {
+            next(new ConflictError(CONFLICT));
             return;
           }
           next(err);
@@ -71,22 +79,22 @@ function updateProfile(req, res, next) {
   )
     .then((userData) => {
       if (!userData) {
-        throw new NotFoundError('Запрашиваемый пользователь не найден');
+        throw new NotFoundError(NOT_FOUND_USER);
       }
       res.send(userData);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         const errObject = Object.keys(err.errors).join(', ');
-        next(new BadRequestError(`Некорректные данные: ${errObject}`));
+        next(new BadRequestError(validationErrorText(errObject)));
         return;
       }
       if (err.name === 'CastError') {
-        next(new BadRequestError('Некорректный id пользователя'));
+        next(new BadRequestError(BAD_REQUEST_USER));
         return;
       }
-      if (err.code === 11000) {
-        next(new ConflictError('Conflict Error Email Text'));
+      if (err.code === CODE_MONGO_ERROR) {
+        next(new ConflictError(CONFLICT));
         return;
       }
       next(err);
@@ -108,7 +116,7 @@ function login(req, res, next) {
     })
     .catch((err) => {
       if (err.name === 'Error') {
-        next(new UnauthorizedError('Некорректные данные почты или пароля'));
+        next(new UnauthorizedError(UNAUTHORIZED));
         return;
       }
       next(err);
