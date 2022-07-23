@@ -8,10 +8,11 @@ const { errors } = require('celebrate');
 const auth = require('./middlewares/auth');
 const NotFoundError = require('./errors/NotFoundError');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
-const routes = require('./routes/index');
+const router = require('./routes');
 const errorHandler = require('./middlewares/errorHandler');
 const rateLimit = require('./middlewares/rateLimit');
-const { PORT = 3000, MONGO_DATABASE = 'mongodb://localhost:27017/moviesdb'} = process.env;
+
+const { PORT = 3000, MONGO_DATABASE = 'mongodb://localhost:27017/moviesdb' } = process.env;
 
 const app = express();
 
@@ -29,11 +30,7 @@ app.use(rateLimit);
 
 app.use(cors());
 
-app.use(routes);
-
-app.use(auth, (req, res, next) => {
-  next(new NotFoundError('Запрашиваемой страницы не существует'));
-});
+app.use(router);
 
 app.use(errorLogger);
 
