@@ -39,7 +39,7 @@
 https://api.bolshakovav.nomoredomains.xyz
 
 ### Ссылка на API frontend
-https://api.bolshakovav.nomoredomains.xyz
+https://bolshakovav.nomoredomains.xyz
 
 ## Публичный IP
 
