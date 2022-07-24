@@ -1,7 +1,7 @@
 {
   "name": "movie-explorer-api",
   "version": "1.0.0",
-  "description": "",
+  "description": "Backend for project MoviesExplorer",
   "main": "index.js",
   "scripts": {
     "start": "node app.js",
@@ -10,7 +10,7 @@
     "lint": "npx eslint ."
   },
   "keywords": [],
-  "author": "",
+  "author": "Andrey, Bolshakov",
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",

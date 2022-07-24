@@ -8,7 +8,6 @@ const ConflictError = require('../errors/ConflictError');
 const UnauthorizedError = require('../errors/UnauthorizedError');
 const {
   validationErrorText,
-  BAD_REQUEST_USER,
   CONFLICT,
   CODE_MONGO_ERROR,
   NOT_FOUND_USER,
@@ -20,13 +19,7 @@ function getUserInfo(req, res, next) {
     .then((userData) => {
       res.send(userData);
     })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new BadRequestError(BAD_REQUEST_USER));
-        return;
-      }
-      next(err);
-    });
+    .catch((err) => next(err));
 }
 
 function createUser(req, res, next) {
@@ -83,10 +76,6 @@ function updateProfile(req, res, next) {
       if (err.name === 'ValidationError') {
         const errObject = Object.keys(err.errors).join(', ');
         next(new BadRequestError(validationErrorText(errObject)));
-        return;
-      }
-      if (err.name === 'CastError') {
-        next(new BadRequestError(BAD_REQUEST_USER));
         return;
       }
       if (err.code === CODE_MONGO_ERROR) {
