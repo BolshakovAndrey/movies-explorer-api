@@ -9,10 +9,9 @@ const isUrl = (link) => {
   throw new Error('Невалидный URL');
 };
 
-const updateProfileValidator = celebrate({
-  body: Joi.object().keys({
-    name: Joi.string().min(2).max(30),
-    email: Joi.string().required().email(),
+const userPatchValidator = celebrate({
+  params: Joi.object().keys({
+    movieId: Joi.string().hex().length(24),
   }),
 });
 
@@ -54,7 +53,7 @@ const signupValidator = celebrate({
 });
 
 module.exports = {
-  updateProfileValidator,
+  userPatchValidator,
   filmCreateValidator,
   filmDeleteValidator,
   signinValidator,

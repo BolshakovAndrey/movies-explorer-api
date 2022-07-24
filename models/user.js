@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
-const { isEmail } = require('validator');
+const validator = require('validator');
 const { UNAUTHORIZED } = require('../utils/constants');
 
 const userSchema = new mongoose.Schema({
@@ -9,8 +9,9 @@ const userSchema = new mongoose.Schema({
     required: [true, 'Поле email  должно быть заполнено'],
     unique: true,
     validate: {
-      validator: (v) => isEmail(v),
-      message: 'Некорректный адрес почты',
+      validator(email) {
+        return validator.isEmail(email);
+      },
     },
   },
   password: {
@@ -27,7 +28,7 @@ const userSchema = new mongoose.Schema({
   },
 }, { versionKey: false });
 
-userSchema.statics.findUserByCredentials = function finder(email, password) {
+function findByCredentials(email, password) {
   return this.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
@@ -41,7 +42,8 @@ userSchema.statics.findUserByCredentials = function finder(email, password) {
           return user;
         });
     });
-};
+}
 
+userSchema.statics.findUserByCredentials = findByCredentials;
 // создаём модель и экспортируем её
 module.exports = mongoose.model('user', userSchema);

@@ -71,17 +71,13 @@ function updateProfile(req, res, next) {
   User.findByIdAndUpdate(
     req.user._id,
     { name, email },
-    {
-      new: true,
-      runValidators: true,
-      upsert: false,
-    },
+    { new: true, runValidators: true, upsert: false },
   )
-    .then((userData) => {
-      if (!userData) {
+    .then((user) => {
+      if (!user) {
         throw new NotFoundError(NOT_FOUND_USER);
       }
-      res.send(userData);
+      res.send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
