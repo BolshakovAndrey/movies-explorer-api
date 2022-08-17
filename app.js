@@ -1,5 +1,5 @@
 require('dotenv').config();
-const cors = require('cors');
+const cors = require('./middlewares/cors');
 const express = require('express');
 const helmet = require('helmet');
 const mongoose = require('mongoose');
@@ -26,7 +26,7 @@ app.use(requestLogger);
 
 app.use(rateLimit);
 
-app.use(cors());
+app.use(cors);
 
 app.use(router);
 
