@@ -44,5 +44,5 @@ https://bolshakovav.nomoredomains.xyz
 
 ## Публичный IP
 
-`51.250.110.182`
+`158.160.5.36`
 

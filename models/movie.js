@@ -1,67 +1,70 @@
 const mongoose = require('mongoose');
-const { isURL } = require('validator');
+const validator = require('validator');
 
 const movieSchema = new mongoose.Schema({
   country: {
     type: String,
-    required: [true, 'Поле  страна создания фильма должно быть заполнено'],
+    required: true,
   },
   director: {
     type: String,
-    required: [true, 'Поле режиссёр фильма должно быть заполнено'],
+    required: true,
   },
   duration: {
     type: Number,
-    required: [true, 'Поле длительность фильма должно быть заполнено'],
+    required: true,
   },
   year: {
-    type: Date,
-    required: [true, 'Поле год выпуска должно быть заполнено'],
+    type: String,
+    required: true,
   },
   description: {
     type: String,
-    required: [true, 'Поле описание фильма должно быть заполнено'],
+    required: true,
   },
   image: {
     type: String,
-    required: [true, 'Поле ссылка на постер к фильму должно быть заполнено'],
+    required: true,
     validate: {
-      validator: (v) => isURL(v),
-      message: 'Некорректный адрес постера к фильму',
+      validator(str) {
+        return validator.isURL(str);
+      },
     },
   },
-  trailerLink: {
+  trailer: {
     type: String,
-    required: [true, 'Поле ссылка на трейлер фильма должно быть заполнено'],
+    required: true,
     validate: {
-      validator: (v) => isURL(v),
-      message: 'Некорректный адрес трейлер фильма',
+      validator(str) {
+        return validator.isURL(str);
+      },
     },
   },
   thumbnail: {
     type: String,
-    required: [true, 'Поле миниатюрное изображение постера к фильму должно быть заполнено'],
+    required: true,
     validate: {
-      validator: (v) => isURL(v),
-      message: 'Некорректный адрес миниатюрного изображения постера к фильму',
+      validator(str) {
+        return validator.isURL(str);
+      },
     },
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'user',
-    required: [true, 'Поле id пользователя, который сохранил фильм должно быть заполнено'],
+    required: true,
   },
   movieId: {
-    type: Number,
-    required: [true, 'Поле id фильма, который содержится в ответе сервиса MoviesExplorer должно быть заполнено'],
+    type: Number, // id фильма, который содержится в ответе сервиса MoviesExplorer
+    required: true,
   },
   nameRU: {
     type: String,
-    required: [true, 'Поле название фильма на русском языке должно быть заполнено'],
+    required: true,
   },
   nameEN: {
     type: String,
-    required: [true, 'Поле название фильма на английском языке должно быть заполнено'],
+    required: true,
   },
 });
 

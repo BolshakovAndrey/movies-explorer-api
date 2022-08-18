@@ -1,42 +1,52 @@
 require('dotenv').config();
-const allowedCors = require('./middlewares/cors');
 const express = require('express');
+const rateLimiter = require('./middlewares/rateLimiter');
 const helmet = require('helmet');
 const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const { errors } = require('celebrate');
-const { requestLogger, errorLogger } = require('./middlewares/logger');
-const router = require('./routes');
+const cors = require('./middlewares/cors');
 const errorHandler = require('./middlewares/errorHandler');
-const rateLimit = require('./middlewares/rateLimit');
-const cors = require("cors");
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 
-const { PORT = 3000, MONGO_DATABASE = 'mongodb://localhost:27017/moviesdb' } = process.env;
+const { MONGO_URL } = require('./utils/constants');
+
+mongoose.connect(MONGO_URL, {
+  useNewUrlParser: true,
+  // useCreateIndex: true,
+  // useFindAndModify: false,
+  useUnifiedTopology: true,
+})
+  // eslint-disable-next-line no-console
+  .then(() => console.log('Database Connected'));
+
+const { PORT = 3000 } = process.env;
 
 const app = express();
 
-app.use(helmet());
+app.use(
+  cors,
+  requestLogger,
+  rateLimiter,
+  helmet(),
+)
 
-mongoose.connect(MONGO_DATABASE);
+app.use(cookieParser());
+app.use(express.json());
+app.use(express.urlencoded({
+  extended: true,
+}));
 
-app.use(bodyParser.json());
-
-app.use(bodyParser.urlencoded({ extended: true }));
-
-app.use(requestLogger);
-
-app.use(rateLimit);
-
-app.use(cors(allowedCors));
-
-app.use(router);
+app.use('/', require('./routes'));
 
 app.use(errorLogger);
 
-app.use(errors());
-
-app.use(errorHandler);
+app.use(
+  errors(),
+  errorHandler,
+);
 
 app.listen(PORT, () => {
-  console.log(`App listening on port ${PORT}`);
+  // eslint-disable-next-line no-console
+  console.log(`App listening at port ${PORT}`);
 });

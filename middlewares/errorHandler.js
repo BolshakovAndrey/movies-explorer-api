@@ -1,13 +1,14 @@
-const { CODE_DEFAULT } = require('../utils/constants');
+const StatusCodes = require('../utils/status-codes');
+const StatusMessages = require('../utils/status-messages');
 
-module.exports = (err, req, res, next) => {
-  const { statusCode = CODE_DEFAULT, message } = err;
+module.exports = ((err, req, res, next) => {
+  const { statusCode = StatusCodes.DEFAULT, message } = err;
+
   res
     .status(statusCode)
     .send({
-      message: statusCode === CODE_DEFAULT
-        ? 'На сервере произошла ошибка'
-        : message,
+      message: statusCode === StatusCodes.DEFAULT ? StatusMessages.DEFAULT : message,
     });
+
   next();
-};
+});
