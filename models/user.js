@@ -1,12 +1,13 @@
-const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
 const validator = require('validator');
-const { UNAUTHORIZED } = require('../utils/constants');
+const bcrypt = require('bcrypt');
+
+const StatusMessages = require('../utils/status-messages');
 
 const userSchema = new mongoose.Schema({
   email: {
     type: String,
-    required: [true, 'Поле email  должно быть заполнено'],
+    required: true,
     unique: true,
     validate: {
       validator(email) {
@@ -16,34 +17,42 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: [true, 'Поле пароль должно быть заполнено'],
+    required: true,
     select: false,
+    minlength: 8,
   },
   name: {
     type: String,
-    required: [true, 'Поле имя должно быть заполнено'],
-    minLength: [2, 'Минимальное количество букв в имени - 2'],
-    maxLength: [30, 'Минимальное количество букв в имени - 30'],
-    default: 'Тестовый пользователь',
+    required: true,
+    minlength: 2,
+    maxlength: 30,
   },
-}, { versionKey: false });
+});
 
-function findByCredentials(email, password) {
+function toJSON() {
+  const obj = this.toObject();
+  delete obj.password;
+  return obj;
+}
+
+userSchema.methods.toJSON = toJSON;
+
+userSchema.statics.findUserByCredentials = function (email, password) {
   return this.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
-        return Promise.reject(new Error(UNAUTHORIZED));
+        return Promise.reject(new Error(StatusMessages.INVALID_CREDENTIALS));
       }
+
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            return Promise.reject(new Error(UNAUTHORIZED));
+            return Promise.reject(new Error(StatusMessages.INVALID_CREDENTIALS));
           }
+
           return user;
         });
     });
-}
+};
 
-userSchema.statics.findUserByCredentials = findByCredentials;
-// создаём модель и экспортируем её
 module.exports = mongoose.model('user', userSchema);
