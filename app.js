@@ -1,5 +1,5 @@
 require('dotenv').config();
-const cors = require('./middlewares/cors');
+const allowedCors = require('./middlewares/cors');
 const express = require('express');
 const helmet = require('helmet');
 const mongoose = require('mongoose');
@@ -9,6 +9,7 @@ const { requestLogger, errorLogger } = require('./middlewares/logger');
 const router = require('./routes');
 const errorHandler = require('./middlewares/errorHandler');
 const rateLimit = require('./middlewares/rateLimit');
+const cors = require("cors");
 
 const { PORT = 3000, MONGO_DATABASE = 'mongodb://localhost:27017/moviesdb' } = process.env;
 
@@ -26,7 +27,7 @@ app.use(requestLogger);
 
 app.use(rateLimit);
 
-app.use(cors);
+app.use(cors(allowedCors));
 
 app.use(router);
 
